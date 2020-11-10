@@ -2,12 +2,12 @@
 
 Topics:
 
-* React Router
-* Protected Routes
-* `axios` package
-* AJAX
-* Promises
-* Authentication tokens
+* React Router 
+* Protected Routes 
+* `axios` package 
+* AJAX 
+* Promises 
+* Authentication tokens 
 
 ## Instructions
 
