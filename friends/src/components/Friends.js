@@ -3,11 +3,12 @@ import axios from 'axios';
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
 const initialFormState = {
-    name: '',
+    credentials: 
+    {name: '',
     age: '',
-    email: '',
+    email: ''},
+    isLoading: false,
 }
-
 
 function Friends() {
 
@@ -17,7 +18,10 @@ function Friends() {
     const handleChange = (e) => {
         setFormValue({
             ...formValue,
+            credentials: {
+            ...formValue.credentials,
             [e.target.name]: e.target.value
+            }
         })
     }
 
@@ -29,6 +33,10 @@ function Friends() {
         axiosWithAuth()
             .get("http://localhost:5000/api/friends")
             .then(res => {
+                setFormValue({
+                    ...formValue,
+                    isLoading: true,
+                })
                 setFriendState(res.data);
                 console.log(res.data);
             })
@@ -36,10 +44,11 @@ function Friends() {
                 console.log(err);
             })
     }
+
     const handlePost = (e) => {
-        e.preventDefault();
+        e.preventDefault();        
         axiosWithAuth()
-        .post("http://localhost:5000/api/friends", formValue)
+        .post("http://localhost:5000/api/friends", formValue.credentials)
             .then(res => {
                 setFriendState(res.data);
                 console.log(res.data);
@@ -47,6 +56,10 @@ function Friends() {
             .catch(err => {
                 console.log(err);
             })
+            setFormValue({
+                ...formValue,
+                credentials: initialFormState.credentials
+            });
     }
     return (
         <div className="container">
@@ -56,27 +69,31 @@ function Friends() {
                     <ul>
                         <label>
                             Name:
-                            <input name="name" type="text" onChange={handleChange} />
+                            <input name="name" type="text" onChange={handleChange} value={formValue.credentials.name}/>
                         </label>
                         <label>
                             Email:
-                            <input name="email" type="email" onChange={handleChange} />
+                            <input name="email" type="email" onChange={handleChange} value={formValue.credentials.email}/>
                         </label>
                         <label>
                             Age:
-                            <input name="age" type="number" onChange={handleChange} />
+                            <input name="age" type="number" onChange={handleChange} value={formValue.credentials.age}/>
                         </label>
                         <button onClick={handlePost}>Submit</button>
                     </ul>
                 </form>
             </div>
-            {friendstate.map(friends =>
+            {formValue.isLoading === true ? 
+            friendstate.map(friends =>
                 <div className="friends-cards" key={friends.id}>
                     <h2>{friends.name}</h2>
                     <h4>{friends.email}</h4>
                     <h4>{friends.age}</h4>
                 </div>
-            )}
+            )
+        : <h1>is Loading....</h1>
+        }
+            
         </div>
     );
 }
